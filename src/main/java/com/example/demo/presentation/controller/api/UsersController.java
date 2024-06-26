@@ -1,4 +1,4 @@
-package presentation.controller.api;
+package com.example.demo.presentation.controller.api;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.domain.model.Users;
 import com.example.demo.domain.service.UsersService;
 import com.example.demo.dto.api.request.UsersRequest;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -22,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/v1/users")
 public class UsersController {
   @Autowired
-  private HttpServletRequest request;
   private UsersService usersService;
 
   @GetMapping
@@ -32,9 +30,6 @@ public class UsersController {
 
   @GetMapping("/{id}")
   public ResponseEntity<Users> getUserById(@PathVariable Long id) {
-    String url = request.getRequestURL()
-        .toString();
-    log.info("リクエストURL：{url}    パラメータ:ID： {}", id);
     Users users = usersService.getUserById(id);
     return ResponseEntity.ok(users);
   }

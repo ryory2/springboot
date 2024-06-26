@@ -1,4 +1,4 @@
-package presentation.controller.api;
+package com.example.demo.presentation.controller.api;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
