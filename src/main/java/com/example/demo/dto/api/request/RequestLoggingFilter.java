@@ -1,4 +1,4 @@
-package com.example.demo.filter;
+package com.example.demo.dto.api.request;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -66,12 +66,13 @@ public class RequestLoggingFilter implements Filter {
     String method = request.getMethod();
 
     // ログ出力
-    log.info("リクエスト - Date: {}, IP Address: {}, Method: {}, URL: {},  Parameters: {}",
+    log.info("リクエスト開始 - Date: {}, IP Address: {}, Method: {}, URL: {},  Parameters: {}",
         formattedDateTime, ipAddress, method, requestUrl, parameters);
   }
 
   private void logResponseInfo(HttpServletResponse response) {
     // レスポンスの情報をログに出力する処理（必要に応じて実装）
+    log.info("レスポンス開始");
   }
 
   private String formatParameters(Map<String, String[]> parameterMap) {
