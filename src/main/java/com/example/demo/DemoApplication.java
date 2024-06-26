@@ -2,10 +2,10 @@ package com.example.demo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.example.demo", "presentation.controller.api"})
+@ServletComponentScan
 public class DemoApplication {
 
   public static void main(String[] args) {
