@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.domain.model.Users;
 import com.example.demo.domain.service.UsersService;
+import com.example.demo.dto.api.request.UsersCreateRequest;
 import com.example.demo.dto.api.request.UsersRequest;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -37,8 +39,9 @@ public class UsersController {
   }
 
   @PostMapping
-  public ResponseEntity<Users> postUsers(@RequestBody UsersRequest usersRequest) {
-    Users createdUser = usersService.postUser(usersRequest);
+  public ResponseEntity<Users> postUsers(
+      @Valid @RequestBody UsersCreateRequest usersCreateRequest) {
+    Users createdUser = usersService.postUser(usersCreateRequest);
     return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
   }
 

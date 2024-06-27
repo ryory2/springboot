@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.demo.domain.model.Users;
 import com.example.demo.domain.repository.UsersRepository;
+import com.example.demo.dto.api.request.UsersCreateRequest;
 import com.example.demo.dto.api.request.UsersRequest;
 import com.example.demo.exception.UserAlreadyExistsException;
 import com.example.demo.exception.UserNotFoundException;
@@ -50,20 +51,20 @@ public class UsersService {
     return result;
   }
 
-  public Users postUser(UsersRequest usersRequest) {
+  public Users postUser(UsersCreateRequest usersCreateRequest) {
     log.info("処理開始： {}", getClass());
     // ユーザ名が既に存在するかチェック
-    if (usersRepository.existsByMail(usersRequest.getMail())) {
+    if (usersRepository.existsByMail(usersCreateRequest.getMail())) {
       log.info("処理終了：[失敗：コンフリクト]： {}", getClass());
       throw new UserAlreadyExistsException(
-          "Username '" + usersRequest.getMail() + "' is already taken.");
+          "Username '" + usersCreateRequest.getMail() + "' is already taken.");
     }
     Users users = new Users();
-    if (!StringUtils.isEmpty(usersRequest.getUserName())) {
-      users.setUserName(usersRequest.getUserName());
+    if (!StringUtils.isEmpty(usersCreateRequest.getUserName())) {
+      users.setUserName(usersCreateRequest.getUserName());
     }
-    users.setMail(usersRequest.getMail());
-    users.setPassword(usersRequest.getPassword());
+    users.setMail(usersCreateRequest.getMail());
+    users.setPassword(usersCreateRequest.getPassword());
     Users result = usersRepository.save(users);
     log.info("[成功]：" + result.toString());
     log.info("処理終了： {}", getClass());
