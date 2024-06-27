@@ -7,4 +7,8 @@ import com.example.demo.domain.model.Users;
 
 @Repository
 public interface UsersRepository extends JpaRepository<Users, Long> {
+  Users findByMail(String mail);
+
+  boolean existsByMail(String mail);
 }
+
