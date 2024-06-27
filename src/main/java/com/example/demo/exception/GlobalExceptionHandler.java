@@ -29,9 +29,9 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(UserAlreadyExistsException.class)
   @ResponseStatus(HttpStatus.CONFLICT)
-  public ResponseEntity<Void> handleUserAlreadyExistsException(UserAlreadyExistsException e) {
+  public ResponseEntity<String> handleUserAlreadyExistsException(UserAlreadyExistsException e) {
     return ResponseEntity.status(HttpStatus.CONFLICT)
-        .build();
+        .body(e.getMessage());
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)

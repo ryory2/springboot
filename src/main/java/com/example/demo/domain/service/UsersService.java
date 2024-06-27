@@ -78,6 +78,7 @@ public class UsersService {
           user.setPassword(usersRequest.getPassword());
           user.setMail(usersRequest.getMail());
           Users updatedUser = usersRepository.save(user);
+          log.info("[成功]：");
           log.info("処理終了：[成功：{}]：{}", updatedUser.toString(), getClass());
           return updatedUser;
         })

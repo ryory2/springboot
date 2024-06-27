@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.domain.model.Users;
 import com.example.demo.domain.service.UsersService;
 import com.example.demo.dto.api.request.UsersRequest;
-import com.example.demo.exception.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -27,20 +26,8 @@ public class UsersController {
 
   @GetMapping
   public ResponseEntity<List<Users>> getAllUsers() {
-    try {
-      List<Users> users = usersService.getAllUsers();
-      return new ResponseEntity<>(users, HttpStatus.OK);
-    } catch (UserNotFoundException e) {
-      // ユーザが存在しない場合のエラーハンドリング
-      log.warn(e.getMessage());
-      return ResponseEntity.status(HttpStatus.NOT_FOUND)
-          .build();
-    } catch (Exception e) {
-      // その他の一般的な例外のエラーハンドリング
-      e.printStackTrace();
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .build();
-    }
+    List<Users> users = usersService.getAllUsers();
+    return new ResponseEntity<>(users, HttpStatus.OK);
   }
 
   @GetMapping("/{id}")
@@ -58,39 +45,15 @@ public class UsersController {
   @PatchMapping("/{id}")
   public ResponseEntity<Users> updateUser(@PathVariable Long id,
       @RequestBody UsersRequest usersRequest) {
-    try {
-      Users updatedUser = usersService.updateUser(id, usersRequest);
-      return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-    } catch (UserNotFoundException e) {
-      // ユーザが存在しない場合のエラーハンドリング
-      log.warn(e.getMessage());
-      return ResponseEntity.status(HttpStatus.NOT_FOUND)
-          .build();
-    } catch (Exception e) {
-      // その他の一般的な例外のエラーハンドリング
-      e.printStackTrace();
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .build();
-    }
+    Users updatedUser = usersService.updateUser(id, usersRequest);
+    return new ResponseEntity<>(updatedUser, HttpStatus.OK);
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-    try {
-      usersService.deleteByID(id);
-      return ResponseEntity.status(HttpStatus.NO_CONTENT)
-          .build();
-    } catch (UserNotFoundException e) {
-      // ユーザが存在しない場合のエラーハンドリング
-      log.warn(e.getMessage());
-      return ResponseEntity.status(HttpStatus.NOT_FOUND)
-          .build();
-    } catch (Exception e) {
-      // その他の一般的な例外のエラーハンドリング
-      e.printStackTrace();
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .build();
-    }
+    usersService.deleteByID(id);
+    return ResponseEntity.status(HttpStatus.NO_CONTENT)
+        .build();
   }
 
 }
