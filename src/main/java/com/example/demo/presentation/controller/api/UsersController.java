@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.example.demo.domain.model.Users;
-import com.example.demo.domain.service.UsersService;
+import com.example.demo.domain.model.User;
+import com.example.demo.domain.service.UserService;
 import com.example.demo.dto.api.request.UsersCreateRequest;
 import com.example.demo.dto.api.request.UsersRequest;
 import jakarta.validation.Valid;
@@ -24,31 +24,31 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/v1/users")
 public class UsersController {
   @Autowired
-  private UsersService usersService;
+  private UserService usersService;
 
   @GetMapping
-  public ResponseEntity<List<Users>> getAllUsers() {
-    List<Users> users = usersService.getAllUsers();
+  public ResponseEntity<List<User>> getAllUsers() {
+    List<User> users = usersService.getAllUsers();
     return new ResponseEntity<>(users, HttpStatus.OK);
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Users> getUserById(@PathVariable Long id) {
-    Users users = usersService.getUserById(id);
+  public ResponseEntity<User> getUserById(@PathVariable Long id) {
+    User users = usersService.getUserById(id);
     return new ResponseEntity<>(users, HttpStatus.OK);
   }
 
   @PostMapping
-  public ResponseEntity<Users> postUsers(
+  public ResponseEntity<User> postUsers(
       @Valid @RequestBody UsersCreateRequest usersCreateRequest) {
-    Users createdUser = usersService.postUser(usersCreateRequest);
+    User createdUser = usersService.postUser(usersCreateRequest);
     return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
   }
 
   @PatchMapping("/{id}")
-  public ResponseEntity<Users> updateUser(@PathVariable Long id,
+  public ResponseEntity<User> updateUser(@PathVariable Long id,
       @RequestBody UsersRequest usersRequest) {
-    Users updatedUser = usersService.updateUser(id, usersRequest);
+    User updatedUser = usersService.updateUser(id, usersRequest);
     return new ResponseEntity<>(updatedUser, HttpStatus.OK);
   }
 

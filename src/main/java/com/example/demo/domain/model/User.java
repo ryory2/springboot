@@ -15,13 +15,13 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "users")
-public class Users {
+public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Column(name = "user_name")
-  private String userName;
+  private String username;
 
   @Column(name = "password")
   private String password;
@@ -38,12 +38,15 @@ public class Users {
   // Hooks for lifecycle events
   @PrePersist
   protected void onCreate() {
-    createdAt = LocalDateTime.now();
-    updatedAt = LocalDateTime.now();
+    createdAt = LocalDateTime
+        .now();
+    updatedAt = LocalDateTime
+        .now();
   }
 
   @PreUpdate
   protected void onUpdate() {
-    updatedAt = LocalDateTime.now();
+    updatedAt = LocalDateTime
+        .now();
   }
 }

@@ -5,8 +5,8 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.example.demo.domain.model.Users;
-import com.example.demo.domain.repository.UsersRepository;
+import com.example.demo.domain.model.User;
+import com.example.demo.domain.repository.UserRepository;
 import com.example.demo.dto.api.request.UsersCreateRequest;
 import com.example.demo.dto.api.request.UsersRequest;
 import com.example.demo.exception.UserAlreadyExistsException;
@@ -15,13 +15,13 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class UsersService {
+public class UserService {
   @Autowired
-  private UsersRepository usersRepository;
+  private UserRepository userRepository;
 
-  public List<Users> getAllUsers() {
+  public List<User> getAllUsers() {
     log.info("処理開始： {}", getClass());
-    List<Users> users = usersRepository.findAll();
+    List<User> users = userRepository.findAll();
 
     if (users.isEmpty()) {
       log.info("処理終了： {}", getClass());
@@ -31,9 +31,9 @@ public class UsersService {
     return users;
   }
 
-  public Users getUserById(Long id) {
+  public User getUserById(Long id) {
     log.info("処理開始： {}", getClass());
-    return usersRepository.findById(id)
+    return userRepository.findById(id)
         .map(user -> {
           log.info("処理終了： {}", getClass());
           return user;
@@ -44,41 +44,41 @@ public class UsersService {
         });
   }
 
-  public Users getUserByMail(UsersRequest usersRequest) {
+  public User getUserByMail(UsersRequest usersRequest) {
     log.info("処理開始： {}", getClass());
-    Users result = usersRepository.findByMail(usersRequest.getMail());
+    User result = userRepository.findByMail(usersRequest.getMail());
     log.info("処理終了： {}", getClass());
     return result;
   }
 
-  public Users postUser(UsersCreateRequest usersCreateRequest) {
+  public User postUser(UsersCreateRequest usersCreateRequest) {
     log.info("処理開始： {}", getClass());
     // ユーザ名が既に存在するかチェック
-    if (usersRepository.existsByMail(usersCreateRequest.getMail())) {
+    if (userRepository.existsByMail(usersCreateRequest.getMail())) {
       log.info("処理終了：[失敗：コンフリクト]： {}", getClass());
       throw new UserAlreadyExistsException(
           "Username '" + usersCreateRequest.getMail() + "' is already taken.");
     }
-    Users users = new Users();
+    User users = new User();
     if (!StringUtils.isEmpty(usersCreateRequest.getUserName())) {
-      users.setUserName(usersCreateRequest.getUserName());
+      users.setUsername(usersCreateRequest.getUserName());
     }
     users.setMail(usersCreateRequest.getMail());
     users.setPassword(usersCreateRequest.getPassword());
-    Users result = usersRepository.save(users);
+    User result = userRepository.save(users);
     log.info("[成功]：" + result.toString());
     log.info("処理終了： {}", getClass());
     return result;
   }
 
-  public Users updateUser(Long id, UsersRequest usersRequest) {
+  public User updateUser(Long id, UsersRequest usersRequest) {
     log.info("処理開始： {}", getClass());
-    return usersRepository.findById(id)
+    return userRepository.findById(id)
         .map(user -> {
-          user.setUserName(usersRequest.getUserName());
+          user.setUsername(usersRequest.getUserName());
           user.setPassword(usersRequest.getPassword());
           user.setMail(usersRequest.getMail());
-          Users updatedUser = usersRepository.save(user);
+          User updatedUser = userRepository.save(user);
           log.info("[成功]：");
           log.info("処理終了：[成功：{}]：{}", updatedUser.toString(), getClass());
           return updatedUser;
@@ -92,11 +92,11 @@ public class UsersService {
   public void deleteByID(Long id) {
     log.info("処理開始： {}", getClass());
     // findByIdでOptional<User>を取得
-    Optional<Users> optionalUser = usersRepository.findById(id);
+    Optional<User> optionalUser = userRepository.findById(id);
 
     // Optionalが値を持っている場合の処理
     optionalUser.ifPresent(user -> {
-      usersRepository.deleteById(id);
+      userRepository.deleteById(id);
       log.info("[成功]：ユーザ ID {} を削除しました", id);
     });
 
@@ -108,4 +108,5 @@ public class UsersService {
 
     log.info("処理終了： {}", getClass());
   }
+
 }
