@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import com.example.demo.domain.model.User;
 import com.example.demo.domain.repository.UserRepository;
@@ -15,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class UserService {
+public class UserService implements UserDetailsService {
   @Autowired
   private UserRepository userRepository;
 
@@ -107,6 +110,12 @@ public class UserService {
     }
 
     log.info("処理終了： {}", getClass());
+  }
+
+  @Override
+  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    // TODO 自動生成されたメソッド・スタブ
+    return null;
   }
 
 }
