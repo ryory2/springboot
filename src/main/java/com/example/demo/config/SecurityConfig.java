@@ -1,30 +1,23 @@
 package com.example.demo.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import com.example.demo.domain.service.MyUserDetailsService;
-import com.example.demo.filter.JwtRequestFilter;
+import com.example.demo.filter.JwtAuthenticationFilter;
+import lombok.RequiredArgsConstructor;
+
 
 // セキュリティに関する設定
+// 「@Configuration」・・・起動時に実行される
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
-
-  @Autowired
-  private MyUserDetailsService myUserDetailsService;
-
-  @Autowired
-  private JwtRequestFilter jwtRequestFilter;
-
+  private final JwtAuthenticationFilter jwtAuthFilter;
+  private final AuthenticationProvider authenticationProvider;
 
   // 認証マネージャーの設定
   // 役割: ユーザー詳細サービスとパスワードエンコーダーの設定
@@ -33,13 +26,13 @@ public class SecurityConfig {
   // protected void configure(AuthenticationManagerBuilder auth) throws Exception {
   // auth.userDetailsService(myUserDetailsService);
   // }
-  @Bean
-  AuthenticationManager authManager(HttpSecurity http) throws Exception {
-    AuthenticationManagerBuilder authenticationManagerBuilder =
-        http.getSharedObject(AuthenticationManagerBuilder.class);
-    authenticationManagerBuilder.authenticationProvider(authProvider);
-    return authenticationManagerBuilder.build();
-  }
+  // @Bean
+  // AuthenticationManager authManager(HttpSecurity http) throws Exception {
+  // AuthenticationManagerBuilder authenticationManagerBuilder =
+  // http.getSharedObject(AuthenticationManagerBuilder.class);
+  // authenticationManagerBuilder.authenticationProvider(authProvider);
+  // return authenticationManagerBuilder.build();
+  // }
 
   // セキュリティ設定
   // 役割: HTTPセキュリティの設定
@@ -60,7 +53,7 @@ public class SecurityConfig {
         // "/api/v1/login"パスに対して、認証なしでアクセスを許可しています。
         // ・「.requestMatchers("/api/v1/login")」・・・「/api/v1/login」のリクエスト
         // ・「.authenticated()」認証の必要なし
-        .requestMatchers("/api/v1/login")
+        .requestMatchers("/api/v1/auth/**")
         .permitAll()
         // 他の全てのリクエストに対しては、認証が必要であることを設定しています。
         // ログイン後に認証済みのユーザーにのみ、アクセスを許可します。
@@ -68,7 +61,9 @@ public class SecurityConfig {
         // ・「.anyRequest()」すべてのリクエスト
         // ・「.authenticated()」認証が必要
         .anyRequest()
-        .authenticated());
+        .authenticated())
+        // 認証プロバイダーを指定する
+        .authenticationProvider(authenticationProvider);
 
     // セッション管理
     // セッションの管理ポリシーを「状態レス（Stateless）」に設定
@@ -82,7 +77,9 @@ public class SecurityConfig {
     // 認証方式の設定
     // 他にフォームベース認証、OAuth2認証、APIキー認証も設定可能
     // ここではJWT認証フィルターを設定
-    http.addFilterBefore(new JwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
+    // フィルターの順番設定
+    // UsernamePasswordAuthenticationFilterの前に、「JwtRequestFilter()」フィルターが実行される
+    http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
     // 最後に、httpオブジェクトをビルドしてSecurityFilterChainを返します。
     // return http
@@ -93,20 +90,21 @@ public class SecurityConfig {
   // パスワードエンコーダーの設定
   // 役割: パスワードの暗号化方式の指定
   // 実行タイミング: アプリケーション起動時
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
+  // @Bean
+  // public PasswordEncoder passwordEncoder() {
+  // return new BCryptPasswordEncoder();
+  // }
 
   // 認証マネージャーのBean定義
   // 役割: 認証マネージャーの提供
   // 実行タイミング: アプリケーション起動時
-  @Bean
+
   // 認証処理を行う中心的な役割を担っています。
   // Springでは、AuthenticationManagerはデフォルトではBeanとして自動的に提供されません。そのため、明示的にBeanとして定義する必要があります。
   // 上記のコードでは、AuthenticationConfigurationを使用して、Springが提供するAuthenticationManagerを取得し、それをBeanとして定義しています。
-  public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
-      throws Exception {
-    return config.getAuthenticationManager();
-  }
+  // @Bean
+  // public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
+  // throws Exception {
+  // return config.getAuthenticationManager();
+  // }
 }
