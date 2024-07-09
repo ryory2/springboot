@@ -1,11 +1,11 @@
 package com.example.demo.dto.api.request;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
@@ -14,7 +14,7 @@ public class UsersCreateRequest {
   @JsonProperty("user_name")
   @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "Username must be alphanumeric")
   @Size(max = 255, message = "Username must be less than 255 characters")
-  private String userName;
+  private String username;
 
   @NotBlank(message = "Password is mandatory")
   @Pattern(

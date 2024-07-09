@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.demo.domain.model.User;
+import com.example.demo.domain.model.User.Role;
 import com.example.demo.domain.repository.UserRepository;
 import com.example.demo.dto.api.request.UsersCreateRequest;
 import com.example.demo.dto.api.request.UsersRequest;
@@ -21,6 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 public class UserService implements UserDetailsService {
   @Autowired
   private UserRepository userRepository;
+  @Autowired
+  private PasswordEncoder passwordEncoder;
 
   public List<User> getAllUsers() {
     log.info("処理開始： {}", getClass());
@@ -49,9 +53,12 @@ public class UserService implements UserDetailsService {
 
   public User getUserByMail(UsersRequest usersRequest) {
     log.info("処理開始： {}", getClass());
-    User result = userRepository.findByMail(usersRequest.getMail());
+    Optional<User> result = userRepository.findByMail(usersRequest.getMail());
     log.info("処理終了： {}", getClass());
-    return result;
+    return result.orElseThrow(() -> {
+      log.info("処理終了：[失敗：NotFound]： {}", getClass());
+      return new UserNotFoundException(usersRequest.getMail());
+    });
   }
 
   public User postUser(UsersCreateRequest usersCreateRequest) {
@@ -62,9 +69,14 @@ public class UserService implements UserDetailsService {
       throw new UserAlreadyExistsException(
           "Username '" + usersCreateRequest.getMail() + "' is already taken.");
     }
-    User users = new User();
-    if (!StringUtils.isEmpty(usersCreateRequest.getUserName())) {
-      users.setUsername(usersCreateRequest.getUserName());
+    User users = User.builder()
+        .username(usersCreateRequest.getUsername())
+        .mail(usersCreateRequest.getMail())
+        .password(passwordEncoder.encode(usersCreateRequest.getPassword()))
+        .role(Role.USER)
+        .build();
+    if (!StringUtils.isEmpty(usersCreateRequest.getUsername())) {
+      users.setUsername(usersCreateRequest.getUsername());
     }
     users.setMail(usersCreateRequest.getMail());
     users.setPassword(usersCreateRequest.getPassword());
