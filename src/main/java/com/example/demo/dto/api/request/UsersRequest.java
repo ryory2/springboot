@@ -7,8 +7,11 @@ import lombok.Data;
 @Data
 public class UsersRequest {
 
-  @JsonProperty("user_name")
-  private String userName;
+  @JsonProperty("first_name")
+  private String firstname;
+
+  @JsonProperty("last_name")
+  private String lastname;
 
   private String password;
 

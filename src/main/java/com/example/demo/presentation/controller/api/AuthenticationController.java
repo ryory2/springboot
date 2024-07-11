@@ -1,5 +1,6 @@
 package com.example.demo.presentation.controller.api;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,12 +20,13 @@ public class AuthenticationController {
 
   // ユーザを登録し、トークンを返却する
   @PostMapping("/register")
-  public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
+  public ResponseEntity<AuthenticationResponse> register(
+      @Valid @RequestBody RegisterRequest request) {
     return ResponseEntity.ok(service.register(request));
   }
 
   // 認証が完了したら、トークンを返却する
-  @PostMapping("/authenticate")
+  @PostMapping("/login")
   public ResponseEntity<AuthenticationResponse> authenticate(
       @RequestBody AuthenticationRequest request) {
     return ResponseEntity.ok(service.authenticate(request));

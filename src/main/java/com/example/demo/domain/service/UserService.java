@@ -69,18 +69,22 @@ public class UserService implements UserDetailsService {
       throw new UserAlreadyExistsException(
           "Username '" + usersCreateRequest.getMail() + "' is already taken.");
     }
-    User users = User.builder()
-        .username(usersCreateRequest.getUsername())
+    User user = User.builder()
+        .firstname(usersCreateRequest.getFirstname())
+        .lastname(usersCreateRequest.getLastname())
         .mail(usersCreateRequest.getMail())
         .password(passwordEncoder.encode(usersCreateRequest.getPassword()))
         .role(Role.USER)
         .build();
-    if (!StringUtils.isEmpty(usersCreateRequest.getUsername())) {
-      users.setUsername(usersCreateRequest.getUsername());
+    if (!StringUtils.isEmpty(usersCreateRequest.getFirstname())) {
+      user.setFirstname(usersCreateRequest.getFirstname());
     }
-    users.setMail(usersCreateRequest.getMail());
-    users.setPassword(usersCreateRequest.getPassword());
-    User result = userRepository.save(users);
+    if (!StringUtils.isEmpty(usersCreateRequest.getLastname())) {
+      user.setLastname(usersCreateRequest.getLastname());
+    }
+    user.setMail(usersCreateRequest.getMail());
+    user.setPassword(usersCreateRequest.getPassword());
+    User result = userRepository.save(user);
     log.info("[成功]：" + result.toString());
     log.info("処理終了： {}", getClass());
     return result;
@@ -90,7 +94,8 @@ public class UserService implements UserDetailsService {
     log.info("処理開始： {}", getClass());
     return userRepository.findById(id)
         .map(user -> {
-          user.setUsername(usersRequest.getUserName());
+          user.setFirstname(usersRequest.getFirstname());
+          user.setLastname(usersRequest.getLastname());
           user.setPassword(usersRequest.getPassword());
           user.setMail(usersRequest.getMail());
           User updatedUser = userRepository.save(user);

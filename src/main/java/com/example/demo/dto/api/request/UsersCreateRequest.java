@@ -11,10 +11,15 @@ import lombok.Data;
 @Data
 public class UsersCreateRequest {
 
-  @JsonProperty("user_name")
+  @JsonProperty("first_name")
   @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "Username must be alphanumeric")
   @Size(max = 255, message = "Username must be less than 255 characters")
-  private String username;
+  private String firstname;
+
+  @JsonProperty("last_name")
+  @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "Username must be alphanumeric")
+  @Size(max = 255, message = "Username must be less than 255 characters")
+  private String lastname;
 
   @NotBlank(message = "Password is mandatory")
   @Pattern(
