@@ -31,4 +31,10 @@ public class AuthenticationController {
       @RequestBody AuthenticationRequest request) {
     return ResponseEntity.ok(service.authenticate(request));
   }
+
+  // 認証が完了したら、トークンを返却する
+  @PostMapping("/logout")
+  public ResponseEntity<AuthenticationResponse> logout(@RequestBody AuthenticationRequest request) {
+    return ResponseEntity.ok(service.logout(request));
+  }
 }

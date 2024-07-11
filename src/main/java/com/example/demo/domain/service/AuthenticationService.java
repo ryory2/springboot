@@ -53,4 +53,16 @@ public class AuthenticationService {
         .token(jwtToken)
         .build();
   }
+
+
+  public AuthenticationResponse logout(AuthenticationRequest request) {
+    authenticationManager.authenticate(
+        new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+    var user = userRepository.findByMail(request.getEmail())
+        .orElseThrow();
+    var jwtToken = jwtService.revocateToken(user);
+    return AuthenticationResponse.builder()
+        .token(jwtToken)
+        .build();
+  }
 }
