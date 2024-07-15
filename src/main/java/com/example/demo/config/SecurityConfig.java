@@ -7,17 +7,22 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.session.DisableEncodeUrlFilter;
 import com.example.demo.filter.JwtAuthenticationFilter;
+import com.example.demo.filter.RequestResponseLoggingFilter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 
 // セキュリティに関する設定
 // 「@Configuration」・・・起動時に実行される
 @Configuration
 @RequiredArgsConstructor
+@Slf4j
 public class SecurityConfig {
   private final JwtAuthenticationFilter jwtAuthFilter;
   private final AuthenticationProvider authenticationProvider;
+  private final RequestResponseLoggingFilter requestResponseLoggingFilter;
 
   // 認証マネージャーの設定
   // 役割: ユーザー詳細サービスとパスワードエンコーダーの設定
@@ -77,8 +82,15 @@ public class SecurityConfig {
     // 認証方式の設定
     // 他にフォームベース認証、OAuth2認証、APIキー認証も設定可能
     // ここではJWT認証フィルターを設定
+
     // フィルターの順番設定
+    // RequestResponseLoggingFilter（→jwtAuthFilter）→UsernamePasswordAuthenticationFilter(基準)
+    // JwtAuthFilterの前に、「JwtRequestFilter()」フィルターが実行される
+    // http.addFilterAfter(jwtAuthFilter, RequestResponseLoggingFilter.class);
     // UsernamePasswordAuthenticationFilterの前に、「JwtRequestFilter()」フィルターが実行される
+    // SecurityFilterChain実行前に、リクエストのログを出力
+    http.addFilterBefore(requestResponseLoggingFilter, DisableEncodeUrlFilter.class);
+    // SecurityFilterChainの中で、ログイン認証実行前に、jwtトークンの検証を行う
     http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
     // 最後に、httpオブジェクトをビルドしてSecurityFilterChainを返します。
