@@ -39,3 +39,7 @@ jwt.expiration=0
 jwt.refreshExpiration=604800
 
 debug=true
+
+
+# メッセージ
+message.exception.badcredentials=認証情報が無効です。ユーザー名またはパスワードが正しくありません。

@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: demo
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/tododb
+    username: root
+    password: my-secret-pw
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    show-sql: true
+
+jwt:
+  secret: W0jkyDxVmK3nrDlHkM6Spu+haQTqYKH3IpWvDoPDQtIpBAC5bguQIdIO63fOkHMH
+  expiration: 0
+  refreshExpiration: 604800
+
+debug: true
+
+message:
+  exception:
+    badcredentials: 認証情報が無効です。ユーザー名またはパスワードが正しくありません。
