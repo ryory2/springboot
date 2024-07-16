@@ -1,6 +1,9 @@
+# 設定ファイル
 spring:
   application:
     name: demo
+  config:
+    import: "classpath:messages.yml"
 
   datasource:
     url: jdbc:mysql://localhost:3306/tododb
@@ -22,7 +25,3 @@ jwt:
   refreshExpiration: 604800
 
 debug: true
-
-message:
-  exception:
-    badcredentials: 認証情報が無効です。ユーザー名またはパスワードが正しくありません。

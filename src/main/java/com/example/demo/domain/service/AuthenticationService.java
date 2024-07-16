@@ -2,8 +2,11 @@ package com.example.demo.domain.service;
 
 
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.demo.domain.model.User;
@@ -13,6 +16,7 @@ import com.example.demo.dto.api.auth.AuthenticationRequest;
 import com.example.demo.dto.api.auth.AuthenticationResponse;
 import com.example.demo.dto.api.auth.RegisterRequest;
 import com.example.demo.exception.UserAlreadyExistsException;
+import com.example.demo.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -22,6 +26,9 @@ public class AuthenticationService {
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
+
+  @Value("${error.exception.badcredentials}")
+  private String badCredentialsMessage;
 
   public AuthenticationResponse register(RegisterRequest request) {
     var user = User.builder()
@@ -43,23 +50,33 @@ public class AuthenticationService {
         .build();
   }
 
+  // カスタムの認証プロバイダー
   public AuthenticationResponse authenticate(AuthenticationRequest request) {
-    authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-    var user = userRepository.findByMail(request.getEmail())
-        .orElseThrow();
-    var jwtToken = jwtService.generateToken(user);
+    String jwtToken = null;
+    try {
+      authenticationManager.authenticate(
+          new UsernamePasswordAuthenticationToken(request.getMail(), request.getPassword()));
+      var user = userRepository.findByMail(request.getMail())
+          .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+      jwtToken = jwtService.generateToken(user);
+    } catch (UserNotFoundException e) {
+      throw new UserNotFoundException("No users found in the database");
+    } catch (BadCredentialsException e) {
+      e.printStackTrace();
+      throw new BadCredentialsException(badCredentialsMessage);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     return AuthenticationResponse.builder()
         .token(jwtToken)
         .build();
   }
 
-
   public AuthenticationResponse logout(AuthenticationRequest request) {
     authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-    var user = userRepository.findByMail(request.getEmail())
-        .orElseThrow();
+        new UsernamePasswordAuthenticationToken(request.getMail(), request.getPassword()));
+    var user = userRepository.findByMail(request.getMail())
+        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     var jwtToken = jwtService.revocateToken(user);
     return AuthenticationResponse.builder()
         .token(jwtToken)
