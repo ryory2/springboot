@@ -39,4 +39,14 @@ public class AuthenticationController {
   public ResponseEntity<AuthenticationResponse> logout(@RequestBody AuthenticationRequest request) {
     return ResponseEntity.ok(service.logout(request));
   }
+
+  // トークンを受け取り、
+  @PostMapping("/jwt")
+  // public ResponseEntity<AuthenticationResponse> authenticateJwt(
+  // @RequestBody AuthenticationRequest request) {
+  // return ResponseEntity.ok(service.logout(request));
+  public ResponseEntity<Void> authenticateJwt() {
+    return ResponseEntity.noContent()
+        .build();
+  }
 }

@@ -1,8 +1,10 @@
 package com.example.demo.domain.service;
 
 
+import java.util.Locale;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,14 +28,13 @@ public class AuthenticationService {
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
-
-  @Value("${error.exception.badcredentials}")
-  private String badCredentialsMessage;
+  @Autowired
+  private final MessageSource messageSource;
+  // @Value("${error.exception.badcredentials}")
+  // private String badCredentialsMessage;
 
   public AuthenticationResponse register(RegisterRequest request) {
     var user = User.builder()
-        .firstname(request.getFirstname())
-        .lastname(request.getLastname())
         .mail(request.getMail())
         .password(passwordEncoder.encode(request.getPassword()))
         .role(Role.USER)
@@ -52,23 +53,24 @@ public class AuthenticationService {
 
   // カスタムの認証プロバイダー
   public AuthenticationResponse authenticate(AuthenticationRequest request) {
-    String jwtToken = null;
+    String jwtAccessToken = null;
     try {
       authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(request.getMail(), request.getPassword()));
       var user = userRepository.findByMail(request.getMail())
           .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-      jwtToken = jwtService.generateToken(user);
+      jwtAccessToken = jwtService.generateToken(user);
     } catch (UserNotFoundException e) {
       throw new UserNotFoundException("No users found in the database");
     } catch (BadCredentialsException e) {
       e.printStackTrace();
-      throw new BadCredentialsException(badCredentialsMessage);
+      throw new BadCredentialsException(
+          messageSource.getMessage("error.exception.badcredentials", null, Locale.getDefault()));
     } catch (Exception e) {
       e.printStackTrace();
     }
     return AuthenticationResponse.builder()
-        .token(jwtToken)
+        .token(jwtAccessToken)
         .build();
   }
 
@@ -82,4 +84,13 @@ public class AuthenticationService {
         .token(jwtToken)
         .build();
   }
+
+  // // JTWトークンの認証を行う
+  // public ResponseEntity<Void> authenticateJwt() {
+  // try {
+  // } catch (Exception e) {
+  // }
+  // return ResponseEntity.noContent()
+  // .build();
+  // }
 }

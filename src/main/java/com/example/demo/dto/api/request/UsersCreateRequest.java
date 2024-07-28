@@ -12,12 +12,14 @@ import lombok.Data;
 public class UsersCreateRequest {
 
   @JsonProperty("first_name")
-  @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "Username must be alphanumeric")
+  @Pattern(regexp = "^[\\p{L} \\-\\.。、・]*$",
+      message = "名前は日本語（漢字、ひらがな、カタカナ）、スペース、ハイフン、中黒を含むことができます")
   @Size(max = 255, message = "Username must be less than 255 characters")
   private String firstname;
 
   @JsonProperty("last_name")
-  @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "Username must be alphanumeric")
+  @Pattern(regexp = "^[\\p{L} \\-\\.。、・]*$",
+      message = "名字は日本語（漢字、ひらがな、カタカナ）、スペース、ハイフン、中黒を含むことができます")
   @Size(max = 255, message = "Username must be less than 255 characters")
   private String lastname;
 
