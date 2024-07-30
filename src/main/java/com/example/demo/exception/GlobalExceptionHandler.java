@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import com.example.demo.dto.api.CustomErrorResponse;
+import com.example.demo.dto.api.exception.ErrorDetail;
+import com.example.demo.dto.api.exception.ErrorResponse;
 import com.example.demo.utils.Utils;
 
 @ControllerAdvice
@@ -52,10 +54,11 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(BadCredentialsException.class)
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
   @ResponseBody
-  public ResponseEntity<CustomErrorResponse> handleBadCredentialsException(
-      BadCredentialsException e, HttpServletRequest request) {
-    CustomErrorResponse errorResponse = Utils.createErrorResponse(HttpStatus.UNAUTHORIZED,
-        HttpStatus.UNAUTHORIZED.getReasonPhrase(), e.getMessage(), request);
+  public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException e,
+      HttpServletRequest request) {
+    ErrorDetail errorDetail = new ErrorDetail(e.getMessage());
+    ErrorResponse errorResponse = new ErrorResponse("error", errorDetail);
+
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
         .body(errorResponse);
   }

@@ -1,6 +1,5 @@
 package com.example.demo.presentation.controller.api;
 
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,7 +29,8 @@ public class AuthenticationController {
   // 認証が完了したら、トークンを返却する
   @PostMapping("/login")
   public ResponseEntity<AuthenticationResponse> authenticate(
-      @Valid @RequestBody AuthenticationRequest request) {
+      @Validated({AuthenticationRequest.GroupOrder.class,
+          AuthenticationRequest.PassGroupOrder.class}) @RequestBody AuthenticationRequest request) {
     return ResponseEntity.ok(service.authenticate(request));
   }
 
@@ -40,7 +40,7 @@ public class AuthenticationController {
     return ResponseEntity.ok(service.logout(request));
   }
 
-  // トークンを受け取り、
+  // トークンを受け取り、認証されているかをHTTPステータスコードで返却する
   @PostMapping("/jwt")
   // public ResponseEntity<AuthenticationResponse> authenticateJwt(
   // @RequestBody AuthenticationRequest request) {
