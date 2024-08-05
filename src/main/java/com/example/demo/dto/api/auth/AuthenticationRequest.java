@@ -48,7 +48,8 @@ public class AuthenticationRequest {
       groups = ValidGroup2.class)
   private String mail;
 
-  @NotBlank(message = "パスワードを入力してください。", groups = PassValidGroup1.class)
+  // @NotBlank(message = "パスワードを入力してください。", groups = PassValidGroup1.class)
+  @NotBlank(message = "{validation.password}を入力してください。", groups = PassValidGroup1.class)
   @Size(max = 255, message = "パスワードは255文字以内で入力してください。", groups = PassValidGroup2.class)
   @Pattern(regexp = "^[a-zA-Z0-9!@#$%^&*()_+\\-=\\[\\]{};':\\\"\\\\|,.<>\\/?]*$",
       message = "パスワードは英数字で入力してください。", groups = PassValidGroup2.class)

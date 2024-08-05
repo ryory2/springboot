@@ -129,6 +129,15 @@ public class UserService implements UserDetailsService {
     log.info("処理終了： {}", getClass());
   }
 
+  public boolean existsUserByMail(String mail) {
+    Optional<User> user = userRepository.findByMail(mail);
+    if (user.isPresent()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     // TODO 自動生成されたメソッド・スタブ

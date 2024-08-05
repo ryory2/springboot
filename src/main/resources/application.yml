@@ -4,6 +4,7 @@ spring:
     name: demo
   messages:
     basename: messages
+    encoding: UTF-8
   datasource:
     url: jdbc:mysql://localhost:3306/tododb
     username: root

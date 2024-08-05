@@ -27,6 +27,7 @@ public class AuthenticationService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
+  private final UserService userService;
   private final AuthenticationManager authenticationManager;
   @Autowired
   private final MessageSource messageSource;
@@ -49,6 +50,13 @@ public class AuthenticationService {
     return AuthenticationResponse.builder()
         .token(jwtToken)
         .build();
+  }
+
+  public void registCheck(RegisterRequest request) {
+    if (userService.existsUserByMail(request.getMail())) {
+      throw new UserAlreadyExistsException(
+          "User with email " + request.getMail() + " already exists.");
+    }
   }
 
   // カスタムの認証プロバイダー

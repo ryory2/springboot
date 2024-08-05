@@ -25,6 +25,7 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public ResponseEntity<CustomErrorResponse> handleGeneralException(Exception e,
       HttpServletRequest request) {
+    e.printStackTrace();
     CustomErrorResponse errorResponse = Utils.createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
         HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), e.getMessage(), request);
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -60,6 +61,18 @@ public class GlobalExceptionHandler {
     ErrorResponse errorResponse = new ErrorResponse("error", errorDetail);
 
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        .body(errorResponse);
+  }
+
+  @ExceptionHandler(SendTimesExceededException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ResponseEntity<ErrorResponse> handleSendTimesExceededException(
+      SendTimesExceededException e, HttpServletRequest request) {
+    ErrorDetail errorDetail = new ErrorDetail(e.getMessage());
+    ErrorResponse errorResponse = new ErrorResponse("error", errorDetail);
+
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(errorResponse);
   }
 

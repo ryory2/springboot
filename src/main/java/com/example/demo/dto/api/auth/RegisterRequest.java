@@ -63,7 +63,7 @@ public class RegisterRequest {
 
   @NotBlank(message = "パスワードを入力してください。", groups = PassValidGroup1.class)
   @Pattern(
-      regexp = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{1,255}$",
-      message = "パスワードは英数字と記号を含み、255文字以内で入力してください。", groups = PassValidGroup2.class)
+      regexp = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,255}$",
+      message = "パスワードは英数字と記号を含み、8文字以上255文字以内で入力してください。", groups = PassValidGroup2.class)
   private String password;
 }

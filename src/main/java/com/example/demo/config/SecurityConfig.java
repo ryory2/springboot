@@ -62,6 +62,8 @@ public class SecurityConfig {
         .permitAll()
         .requestMatchers("/api/v1/auth/jwt")
         .authenticated() // "/api/v1/auth/jwt" のみ要認証
+        .requestMatchers("/api/v1/otp/**")
+        .permitAll()
         // 他の全てのリクエストに対しては、認証が必要であることを設定しています。
         // ログイン後に認証済みのユーザーにのみ、アクセスを許可します。
         // 逆に対象の配下だけ認証が必要のように設定したい場合、「.requestMatchers("/api/**").authenticated());」とすると、/api/配下の場合に認証が必要になる。

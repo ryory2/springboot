@@ -18,7 +18,16 @@ import lombok.RequiredArgsConstructor;
 public class AuthenticationController {
   private final AuthenticationService service;
 
-  // ユーザを登録し、トークンを返却する
+  // ユーザ登録時のチェックをする
+  @PostMapping("/register-validation")
+  public ResponseEntity<Void> registCheck(@Validated({RegisterRequest.GroupOrder.class,
+      RegisterRequest.PassGroupOrder.class}) @RequestBody RegisterRequest request) {
+    service.registCheck(request);
+    return ResponseEntity.noContent()
+        .build();
+  }
+
+  // ユーザを登録し、otpを送信する
   @PostMapping("/register")
   public ResponseEntity<AuthenticationResponse> register(
       @Validated({RegisterRequest.GroupOrder.class,
